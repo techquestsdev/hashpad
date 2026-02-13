@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <title>QR Code</title>
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #161616;
+      --brand-color: #0569fa;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #000000;
+        --text-color: #ffffff;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      color-scheme: light dark;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font: 18px / 1.5 system-ui, -apple-system, sans-serif;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1 {
+      font-size: 1.5em;
+      font-weight: 600;
+      margin-bottom: 1em;
+      opacity: 0.8;
+    }
+
+    #qrcode {
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    #qrcode svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 300px;
+    }
+
+    a {
+      color: var(--text-color);
+      text-decoration: underline;
+      text-underline-offset: 6px;
+      text-decoration-thickness: 1px;
+      transition: opacity 0.2s;
+    }
+
+    a:hover {
+      opacity: 0.7;
+    }
+
+    .error {
+      color: #e53935;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="qrcode"></div>
+  <a id="link" href="/">Back to editor</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@2.0.2"></script>
+  <script>
+    // Configuration - change this URL for your deployment
+    const BASE_URL = window.location.origin;
+
+    function render() {
+      const hash = location.hash;
+      const url = BASE_URL + '/' + hash;
+
+      // Update back link
+      const link = document.getElementById('link');
+      link.href = '/' + hash;
+
+      // Check if hash is empty or too short
+      if (!hash || hash.length < 2) {
+        document.getElementById('qrcode').innerHTML = '<p class="error">No content to encode.<br>Add some text in the editor first.</p>';
+        return;
+      }
+
+      // Generate QR code
+      // Using error correction level L (7%) for maximum data capacity
+      const typeNumber = 0;  // Auto-detect size
+      const errorCorrectionLevel = 'L';
+
+      try {
+        const qr = qrcode(typeNumber, errorCorrectionLevel);
+        // Use 'Byte' mode to handle all URL characters (including #, _, -, etc.)
+        qr.addData(url, 'Byte');
+        qr.make();
+        document.getElementById('qrcode').innerHTML = qr.createSvgTag({cellSize: 8, margin: 0});
+      } catch (e) {
+        console.error('QR generation error:', e);
+        // Provide more helpful error message
+        let msg = 'Could not generate QR code';
+        if (e && e.toString && e.toString().includes('overflow')) {
+          msg = 'Content is too long for QR code.<br>Try shortening your text.';
+        }
+        document.getElementById('qrcode').innerHTML = '<p class="error">' + msg + '</p>';
+      }
+    }
+
+    render();
+    addEventListener('hashchange', render);
+  </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+# Global options
+{
+	# Disable admin API (not needed for static sites)
+	admin off
+
+	# Use HTTP/2 and HTTP/3
+	servers {
+		protocols h1 h2 h3
+	}
+}
+
+:8080 {
+	# Serve static files from the current directory
+	root * {$ROOT_PATH:.}
+
+	# Enable file server
+	file_server {
+		index index.html
+	}
+
+	# Handle errors with 404.html
+	handle_errors {
+		rewrite * /404.html
+		file_server
+	}
+
+	# Security headers
+	header {
+		# Prevent clickjacking
+		X-Frame-Options "DENY"
+
+		# Prevent MIME type sniffing
+		X-Content-Type-Options "nosniff"
+
+		# XSS protection (legacy, but still useful)
+		X-XSS-Protection "1; mode=block"
+
+		# Referrer policy - don't leak URL (important since content is in hash)
+		Referrer-Policy "no-referrer"
+
+		# Permissions policy - disable unnecessary features
+		Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+
+		# Content Security Policy
+		# - Allow inline styles (needed for syntax highlighting)
+		# - Allow cdn.jsdelivr.net for QR code library
+		# - Allow data: for generated images
+    Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://cdn.jsdelivr.net; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+		# Remove server header
+		-Server
+	}
+
+	# Cache static assets aggressively (1 year)
+	@static {
+		path *.png *.ico *.json
+	}
+	header @static Cache-Control "public, max-age=31536000, immutable"
+
+	# Cache HTML with revalidation (1 hour)
+	@html {
+		path *.html /
+	}
+	header @html Cache-Control "public, max-age=3600, must-revalidate"
+
+	# On-the-fly compression (zstd preferred, gzip fallback)
+	encode zstd gzip
+
+	# Logging (minimal, errors only)
+	log {
+		output stdout
+		format json
+		level ERROR
+	}
+}

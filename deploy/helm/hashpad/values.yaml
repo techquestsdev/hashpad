@@ -1,0 +1,76 @@
+# Default values for hashpad website
+
+imageRegistry: ghcr.io/aanogueira
+
+imagePullSecrets: []
+
+replicaCount: 1
+
+image:
+  repository: hashpad
+  tag: ""
+  pullPolicy: Always
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+service:
+  type: ClusterIP
+  port: 8080
+
+env: {}
+
+# Ingress
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+  host: hashpad.example.com
+  tls: []
+    # - secretName: hashpad-tls
+    #   hosts:
+    #     - hashpad.example.com
+
+# Service Account
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# Pod Security
+podSecurityContext:
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+# Container Security
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+# Node selector for all pods
+nodeSelector: {}
+
+# Tolerations for all pods
+tolerations: []
+
+# Affinity for all pods
+affinity: {}
+
+# Overrides base name of the deployed resources
+fullnameOverride: ""
+
+# Overrides chart name in the deployed resources
+nameOverride: ""

@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <title>Textarea</title>
+  <style>
+    /* ============================================================
+       DEPLOYMENT CONFIGURATION
+       Customize these variables before deploying to your environment.
+       ============================================================ */
+    :root {
+      /* Brand & Identity */
+      --brand-name: "Textarea";
+      --brand-color: #0569fa;
+
+      /* Typography */
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-family-mono: ui-monospace, "SF Mono", Monaco, "Cascadia Code", monospace;
+      --font-size: 18px;
+      --line-height: 1.5;
+
+      /* Layout */
+      --max-width: 800px;
+      --padding: 18px;
+
+      /* Light theme colors */
+      --bg-color: #ffffff;
+      --text-color: #161616;
+      --link-color: #0066cc;
+      --elevated-bg: #ffffff;
+      --outline-color: #007aff;
+      --button-bg: #0569fa;
+      --button-hover-bg: #3c86f3;
+      --notification-bg: #5ad227;
+
+      /* Heading colors (optional, defaults to text-color) */
+      --h1-color: var(--text-color);
+      --h2-color: var(--text-color);
+      --h3-color: var(--text-color);
+
+      /* Code block styling */
+      --code-bg: rgba(0, 0, 0, 0.05);
+      --code-color: inherit;
+    }
+
+    /* Dark theme overrides */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #000000;
+        --text-color: #ffffff;
+        --link-color: #58a6ff;
+        --elevated-bg: #121212;
+        --code-bg: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    /* ============================================================
+       END CONFIGURATION - Core styles below
+       ============================================================ */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      color-scheme: light dark;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      background-color: var(--bg-color);
+    }
+
+    body {
+      color: var(--text-color);
+      font-family: var(--font-family);
+    }
+
+    a {
+      color: var(--link-color);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 1px;
+    }
+
+    article {
+      outline: none;
+      padding: var(--padding) max(var(--padding), calc(50vw - var(--max-width) / 2));
+      width: 100%;
+      min-height: 100dvh;
+      font: var(--font-size) / var(--line-height) var(--font-family);
+      tab-size: 4;
+      white-space: pre-wrap;
+      text-wrap-style: stable;
+      overflow-wrap: break-word;
+    }
+
+    /* Markdown heading styles */
+    .md-h1, .md-h2, .md-h3, .md-h4, .md-h5, .md-h6 {
+      font-weight: 700;
+    }
+
+    .md-h1 {
+      font-size: 2em;
+      color: var(--h1-color);
+    }
+
+    .md-h2 {
+      font-size: 1.5em;
+      color: var(--h2-color);
+    }
+
+    .md-h3 {
+      font-size: 1.25em;
+      color: var(--h3-color);
+    }
+
+    .md-h4 {
+      font-size: 1.1em;
+    }
+
+    .md-h5 {
+      font-size: 1em;
+    }
+
+    .md-h6 {
+      font-size: 0.9em;
+    }
+
+    .md-code {
+      font-family: var(--font-family-mono);
+      background: var(--code-bg);
+      color: var(--code-color);
+      padding: 0.1em 0.3em;
+      border-radius: 3px;
+    }
+
+    .md-codeblock {
+      font-family: var(--font-family-mono);
+      background: var(--code-bg);
+      display: block;
+      padding: 0.5em;
+      border-radius: 4px;
+    }
+
+    .md-bold {
+      font-weight: bold;
+    }
+
+    .md-strike {
+      text-decoration: line-through;
+    }
+
+    .md-italic {
+      font-style: italic;
+    }
+
+    .md-url {
+      cursor: pointer;
+    }
+
+    /* Blockquote */
+    .md-blockquote {
+      display: block;
+      border-left: 3px solid var(--brand-color);
+      padding-left: 1em;
+      margin-left: 0;
+      opacity: 0.85;
+    }
+
+    /* Table rows */
+    .md-table-row {
+      font-family: var(--font-family-mono);
+      font-size: 0.95em;
+    }
+
+    .md-table-separator {
+      opacity: 0.5;
+      font-family: var(--font-family-mono);
+      font-size: 0.95em;
+    }
+
+    /* Horizontal rule */
+    .md-hr {
+      display: block;
+      color: transparent;
+      border-bottom: 2px solid rgba(128, 128, 128, 0.3);
+      margin: 0.25em 0;
+      line-height: 0.5;
+    }
+
+    /* FAB Button */
+    #button {
+      -webkit-tap-highlight-color: transparent;
+      background-color: var(--button-bg);
+      border-radius: 50%;
+      border: none;
+      bottom: 15px;
+      box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, .12);
+      color: #fff;
+      cursor: pointer;
+      display: grid;
+      font-weight: 600;
+      width: 46px;
+      height: 46px;
+      outline: none;
+      overflow: hidden;
+      padding: 0;
+      place-items: center;
+      position: fixed;
+      right: 15px;
+      text-decoration: none;
+      touch-action: manipulation;
+      transition: background-color .3s ease-out;
+      user-select: none;
+      z-index: 1;
+    }
+
+    @media (hover) {
+      #button:hover {
+        color: #fff;
+        background-color: var(--button-hover-bg);
+        box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, .12);
+      }
+    }
+
+    #button:focus-visible {
+      outline: 2px solid var(--outline-color);
+      outline-offset: 2px;
+    }
+
+    span.ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple 600ms linear;
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* Menu */
+    #menu {
+      visibility: hidden;
+      transform: scale(0.9) translateY(20px);
+      transition: all 100ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      opacity: 0;
+      display: flex;
+      flex-direction: column;
+      width: 220px;
+      position: fixed;
+      right: 16px;
+      bottom: 77px;
+      box-shadow: 0 19px 38px rgba(0, 0, 0, 0.10), 0 15px 12px rgba(0, 0, 0, 0.05);
+      background: var(--elevated-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      z-index: 2;
+    }
+
+    #menu.visible {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      visibility: visible;
+    }
+
+    #menu .item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: left;
+      padding: 10px 14px;
+      overflow: hidden;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+      border: none;
+      touch-action: manipulation;
+      font: 16px / 1.5 var(--font-family);
+      color: var(--text-color);
+      background: transparent;
+      width: 100%;
+    }
+
+    #menu .item:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #menu .item:hover {
+        background-color: #353535;
+      }
+    }
+
+    #menu .item:focus-within {
+      outline: 2px solid var(--outline-color);
+    }
+
+    #menu .item:first-child {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+
+    #menu .item:last-child {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    /* Notification */
+    #notification {
+      visibility: hidden;
+      transform: translateY(-30px);
+      transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      opacity: 0;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      right: 17px;
+      top: 17px;
+      background: var(--notification-bg);
+      color: #fff;
+      border-radius: 30px;
+      font: 18px / 1 var(--font-family);
+      font-weight: 600;
+      z-index: 2;
+      padding: 10px 20px;
+    }
+
+    #notification.visible {
+      opacity: 1;
+      transform: translateY(0);
+      visibility: visible;
+    }
+
+    /* Password Modal */
+    #password-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      place-items: center;
+    }
+
+    #password-modal.visible {
+      display: grid;
+    }
+
+    #password-modal .modal-content {
+      background: var(--elevated-bg);
+      border-radius: 12px;
+      padding: 24px;
+      width: 90%;
+      max-width: 360px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    #password-modal h2 {
+      font-size: 1.25em;
+      margin-bottom: 16px;
+      color: var(--text-color);
+    }
+
+    #password-modal input {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 16px;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-family: var(--font-family);
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #password-modal input {
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    #password-modal input:focus {
+      outline: none;
+      border-color: var(--brand-color);
+    }
+
+    #password-modal .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    #password-modal button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font-family);
+    }
+
+    #password-modal .btn-cancel {
+      background: transparent;
+      color: var(--text-color);
+    }
+
+    #password-modal .btn-confirm {
+      background: var(--brand-color);
+      color: #fff;
+    }
+
+    #password-modal .error-message {
+      color: #e53935;
+      font-size: 14px;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    #password-modal .error-message.visible {
+      display: block;
+    }
+
+    /* Lock indicator */
+    #lock-indicator {
+      position: fixed;
+      top: 17px;
+      left: 17px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: var(--elevated-bg);
+      border-radius: 20px;
+      font-size: 14px;
+      color: var(--text-color);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #lock-indicator.visible {
+      display: flex;
+    }
+
+    @media print {
+      .noprint {
+        visibility: hidden !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <article contenteditable="plaintext-only" spellcheck autofocus></article>
+
+  <div id="lock-indicator" class="noprint">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+    </svg>
+    <span>Encrypted</span>
+  </div>
+
+  <button id="button" class="noprint" aria-label="Menu">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="1"></circle>
+      <circle cx="12" cy="5" r="1"></circle>
+      <circle cx="12" cy="19" r="1"></circle>
+    </svg>
+  </button>
+
+  <div id="menu" class="noprint" role="menu">
+    <a class="item" href="#new" target="_blank" role="menuitem">
+      <svg aria-hidden="true" focusable="false" width="22" height="22">
+        <use xlink:href="#icon-plus"></use>
+      </svg>
+      New document
+    </a>
+    <a class="item" id="qr-link" href="/qr.html" role="menuitem">
+      <svg aria-hidden="true" focusable="false" width="22" height="22">
+        <use xlink:href="#icon-qrcode"></use>
+      </svg>
+      Generate QR code
+    </a>
+    <button class="item" id="lock-btn" role="menuitem">
+      <svg aria-hidden="true" focusable="false" width="22" height="22">
+        <use xlink:href="#icon-lock"></use>
+      </svg>
+      <span id="lock-btn-text">Lock with password</span>
+    </button>
+    <a class="item" id="share-link" href="" role="menuitem">
+      <svg aria-hidden="true" focusable="false" width="22" height="22">
+        <use xlink:href="#icon-share"></use>
+      </svg>
+      Share document
+    </a>
+    <a class="item" id="save-as-html" href="" role="menuitem">
+      <svg aria-hidden="true" focusable="false" width="22" height="22">
+        <use xlink:href="#icon-empty"></use>
+      </svg>
+      Save as HTML
+    </a>
+    <a class="item" id="save-as-text" href="" role="menuitem">
+      <svg aria-hidden="true" focusable="false" width="22" height="22">
+        <use xlink:href="#icon-empty"></use>
+      </svg>
+      Save as MD
+    </a>
+  </div>
+
+  <div id="notification" class="noprint"></div>
+
+  <div id="password-modal" class="noprint">
+    <div class="modal-content">
+      <h2 id="modal-title">Lock with password</h2>
+      <div class="error-message" id="modal-error"></div>
+      <input type="password" id="password-input" placeholder="Enter password" autocomplete="off">
+      <div class="modal-buttons">
+        <button class="btn-cancel" id="modal-cancel">Cancel</button>
+        <button class="btn-confirm" id="modal-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // ENCRYPTION UTILITIES (Web Crypto API)
+    // Uses AES-GCM with PBKDF2 key derivation
+    // ============================================================
+
+    const PBKDF2_ITERATIONS = 100000;
+    const SALT_LENGTH = 16;
+    const IV_LENGTH = 12;
+
+    async function deriveKey(password, salt) {
+      const encoder = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(password),
+        'PBKDF2',
+        false,
+        ['deriveKey']
+      );
+
+      return crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: salt,
+          iterations: PBKDF2_ITERATIONS,
+          hash: 'SHA-256'
+        },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+      );
+    }
+
+    async function encryptContent(content, password) {
+      const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH));
+      const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
+      const key = await deriveKey(password, salt);
+
+      const encoder = new TextEncoder();
+      const encrypted = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: iv },
+        key,
+        encoder.encode(content)
+      );
+
+      // Combine: salt + iv + ciphertext
+      const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+      combined.set(salt, 0);
+      combined.set(iv, salt.length);
+      combined.set(new Uint8Array(encrypted), salt.length + iv.length);
+
+      return combined;
+    }
+
+    async function decryptContent(combined, password) {
+      const salt = combined.slice(0, SALT_LENGTH);
+      const iv = combined.slice(SALT_LENGTH, SALT_LENGTH + IV_LENGTH);
+      const ciphertext = combined.slice(SALT_LENGTH + IV_LENGTH);
+
+      const key = await deriveKey(password, salt);
+
+      const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: iv },
+        key,
+        ciphertext
+      );
+
+      return new TextDecoder().decode(decrypted);
+    }
+
+    // ============================================================
+    // COMPRESSION UTILITIES
+    // ============================================================
+
+    async function compress(string) {
+      const byteArray = new TextEncoder().encode(string);
+      const stream = new CompressionStream('deflate-raw');
+      const writer = stream.writable.getWriter();
+      writer.write(byteArray);
+      writer.close();
+      const buffer = await new Response(stream.readable).arrayBuffer();
+      return new Uint8Array(buffer);
+    }
+
+    async function decompress(byteArray) {
+      const stream = new DecompressionStream('deflate-raw');
+      const writer = stream.writable.getWriter();
+      writer.write(byteArray);
+      writer.close();
+      const buffer = await new Response(stream.readable).arrayBuffer();
+      return new TextDecoder().decode(buffer);
+    }
+
+    function toBase64Url(uint8Array) {
+      return uint8Array.toBase64({ alphabet: 'base64url' });
+    }
+
+    function fromBase64Url(base64) {
+      return Uint8Array.fromBase64(base64, { alphabet: 'base64url' });
+    }
+
+    // ============================================================
+    // URL ENCODING
+    // Format: #<compressed>        - plain content
+    //         #!<encrypted>        - password protected
+    // ============================================================
+
+    const ENCRYPTED_PREFIX = '!';
+
+    async function encodeToHash(content, password = null) {
+      const compressed = await compress(content);
+
+      if (password) {
+        const encrypted = await encryptContent(toBase64Url(compressed), password);
+        return '#' + ENCRYPTED_PREFIX + toBase64Url(encrypted);
+      }
+
+      return '#' + toBase64Url(compressed);
+    }
+
+    async function decodeFromHash(hash, password = null) {
+      if (!hash || hash === '#') return { content: '', encrypted: false };
+
+      const data = hash.slice(1); // Remove #
+
+      if (data.startsWith(ENCRYPTED_PREFIX)) {
+        // Encrypted content
+        if (!password) {
+          return { content: null, encrypted: true, needsPassword: true };
+        }
+
+        try {
+          const encrypted = fromBase64Url(data.slice(1));
+          const compressedBase64 = await decryptContent(encrypted, password);
+          const compressed = fromBase64Url(compressedBase64);
+          const content = await decompress(compressed);
+          return { content, encrypted: true };
+        } catch (e) {
+          return { content: null, encrypted: true, error: 'Invalid password' };
+        }
+      }
+
+      // Plain content
+      const compressed = fromBase64Url(data);
+      const content = await decompress(compressed);
+      return { content, encrypted: false };
+    }
+
+    // ============================================================
+    // APPLICATION STATE
+    // ============================================================
+
+    let isEncrypted = false;
+    let currentPassword = null;
+
+    // ============================================================
+    // EDITOR
+    // ============================================================
+
+    initUI();
+
+    const article = document.querySelector('article');
+    const editor = new Editor(article, parseMarkdown);
+
+    article.addEventListener('input', debounce(500, save));
+    article.addEventListener('blur', save);
+    article.addEventListener('click', event => {
+      if (event.target.tagName === 'A') window.open(event.target.getAttribute('href'), '_blank');
+    });
+
+    addEventListener('DOMContentLoaded', load);
+    addEventListener('hashchange', load);
+    addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.code === 'KeyS') {
+        e.preventDefault();
+        downloadHTML();
+      }
+    });
+
+    async function load() {
+      try {
+        const hash = location.hash || localStorage.getItem('hash') || '';
+        const result = await decodeFromHash(hash);
+
+        if (result.needsPassword) {
+          // Show password prompt
+          showPasswordModal('unlock', async (password) => {
+            const decrypted = await decodeFromHash(hash, password);
+            if (decrypted.error) {
+              return decrypted.error;
+            }
+            currentPassword = password;
+            isEncrypted = true;
+            editor.set(decrypted.content || '');
+            updateLockIndicator();
+            updateTitle();
+            return null;
+          });
+          return;
+        }
+
+        if (result.error) {
+          article.textContent = '';
+          return;
+        }
+
+        isEncrypted = result.encrypted;
+        editor.set(result.content || '');
+
+        if (result.content && !location.hash) {
+          history.replaceState({}, '', await encodeToHash(result.content, currentPassword));
+        }
+
+        updateLockIndicator();
+        updateTitle();
+      } catch (e) {
+        article.textContent = '';
+        console.error('Load error:', e);
+      }
+    }
+
+    async function save() {
+      const content = article.textContent;
+      const hash = await encodeToHash(content, currentPassword);
+
+      if (location.hash !== hash) {
+        history.replaceState({}, '', hash);
+      }
+
+      try {
+        localStorage.setItem('hash', hash);
+      } catch (e) {}
+
+      updateTitle();
+    }
+
+    function updateTitle() {
+      const match = article.textContent.match(/^\n*#(.+)\n/);
+      document.title = match?.[1]?.trim() || 'Textarea';
+    }
+
+    function updateLockIndicator() {
+      const indicator = document.getElementById('lock-indicator');
+      const lockBtn = document.getElementById('lock-btn-text');
+
+      if (isEncrypted) {
+        indicator.classList.add('visible');
+        lockBtn.textContent = 'Remove password';
+      } else {
+        indicator.classList.remove('visible');
+        lockBtn.textContent = 'Lock with password';
+      }
+    }
+
+    // ============================================================
+    // PASSWORD MODAL
+    // ============================================================
+
+    function showPasswordModal(mode, callback) {
+      const modal = document.getElementById('password-modal');
+      const title = document.getElementById('modal-title');
+      const input = document.getElementById('password-input');
+      const error = document.getElementById('modal-error');
+      const confirmBtn = document.getElementById('modal-confirm');
+      const cancelBtn = document.getElementById('modal-cancel');
+
+      title.textContent = mode === 'unlock' ? 'Enter password' : 'Set password';
+      input.value = '';
+      error.textContent = '';
+      error.classList.remove('visible');
+
+      modal.classList.add('visible');
+      setTimeout(() => input.focus(), 100);
+
+      const cleanup = () => {
+        modal.classList.remove('visible');
+        confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+        cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+        input.replaceWith(input.cloneNode(true));
+      };
+
+      const MIN_PASSWORD_LENGTH = 8;
+
+      const handleConfirm = async () => {
+        const password = document.getElementById('password-input').value;
+        if (!password) {
+          error.textContent = 'Password is required';
+          error.classList.add('visible');
+          return;
+        }
+
+        // Only enforce minimum length when setting a new password, not when unlocking
+        if (mode === 'lock' && password.length < MIN_PASSWORD_LENGTH) {
+          error.textContent = `Password must be at least ${MIN_PASSWORD_LENGTH} characters`;
+          error.classList.add('visible');
+          return;
+        }
+
+        const err = await callback(password);
+        if (err) {
+          document.getElementById('modal-error').textContent = err;
+          document.getElementById('modal-error').classList.add('visible');
+          return;
+        }
+
+        cleanup();
+      };
+
+      document.getElementById('modal-confirm').addEventListener('click', handleConfirm);
+      document.getElementById('modal-cancel').addEventListener('click', cleanup);
+      document.getElementById('password-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') handleConfirm();
+        if (e.key === 'Escape') cleanup();
+      });
+    }
+
+    // ============================================================
+    // UI INITIALIZATION
+    // ============================================================
+
+    function initUI() {
+      const menu = document.querySelector('#menu');
+      const button = document.querySelector('#button');
+      const shareLink = document.querySelector('#share-link');
+      const qrLink = document.querySelector('#qr-link');
+      const saveAsHTML = document.querySelector('#save-as-html');
+      const saveAsText = document.querySelector('#save-as-text');
+      const lockBtn = document.querySelector('#lock-btn');
+
+      button.addEventListener('click', event => {
+        if (event.clientX || event.targetTouches) ripple(event);
+        menu.classList.toggle('visible');
+        shareLink.setAttribute('href', location.href);
+        qrLink.setAttribute('href', '/qr.html' + location.hash);
+      });
+
+      function hideMenu() {
+        menu.classList.remove('visible');
+      }
+
+      function notify(message) {
+        const notification = document.querySelector('#notification');
+        notification.classList.add('visible');
+        notification.textContent = message;
+        setTimeout(() => notification.classList.remove('visible'), 2e3);
+      }
+
+      document.body.addEventListener('click', event => {
+        let t = event.target;
+        if (t.closest('#menu')) return;
+        if (t.closest('#button')) return;
+        if (t.closest('.ripple')) return;
+        menu.classList.remove('visible');
+      });
+
+      shareLink.addEventListener('click', event => {
+        event.preventDefault();
+        if (!navigator.clipboard) {
+          alert('Your browser does not support clipboard API');
+          return;
+        }
+        navigator.clipboard.writeText(location.href);
+        notify('Link copied');
+        hideMenu();
+      });
+
+      saveAsHTML.addEventListener('click', event => {
+        event.preventDefault();
+        downloadHTML();
+        hideMenu();
+      });
+
+      saveAsText.addEventListener('click', event => {
+        event.preventDefault();
+        downloadMD();
+        hideMenu();
+      });
+
+      lockBtn.addEventListener('click', () => {
+        hideMenu();
+
+        if (isEncrypted) {
+          // Remove encryption
+          isEncrypted = false;
+          currentPassword = null;
+          updateLockIndicator();
+          save();
+          notify('Password removed');
+        } else {
+          // Add encryption
+          showPasswordModal('lock', async (password) => {
+            currentPassword = password;
+            isEncrypted = true;
+            updateLockIndicator();
+            await save();
+            notify('Document locked');
+            return null;
+          });
+        }
+      });
+    }
+
+    function ripple(event) {
+      const button = event.currentTarget;
+      const circle = document.createElement('span');
+      const diameter = Math.max(button.clientWidth, button.clientHeight);
+      const radius = diameter / 2;
+      circle.style.width = circle.style.height = `${diameter}px`;
+      circle.style.left = `${(event.clientX || event.targetTouches[0].pageX) - button.offsetLeft - radius}px`;
+      circle.style.top = `${(event.clientY || event.targetTouches[0].pageY) - button.offsetTop - radius}px`;
+      circle.classList.add('ripple');
+      const ripple = button.getElementsByClassName('ripple')[0];
+      if (ripple) ripple.remove();
+      button.appendChild(circle);
+    }
+
+    // ============================================================
+    // DOWNLOAD FUNCTIONS
+    // ============================================================
+
+    async function downloadHTML() {
+      updateTitle();
+      const doc = document.documentElement.cloneNode(true);
+      doc.querySelectorAll('script').forEach(s => s.remove());
+      doc.querySelectorAll('.noprint').forEach(s => s.remove());
+      doc.querySelector('article').removeAttribute('contenteditable');
+      const html = '<!DOCTYPE html>\n' + doc.outerHTML;
+
+      if ('showSaveFilePicker' in window) {
+        try {
+          const handle = await showSaveFilePicker({
+            suggestedName: document.title + '.html',
+            types: [{
+              description: 'HTML file',
+              accept: {'text/html': ['.html']},
+            }],
+          });
+          const writable = await handle.createWritable();
+          await writable.write(html);
+          await writable.close();
+          return;
+        } catch (e) {
+          if (e.name === 'AbortError') return;
+        }
+      }
+
+      const blob = new Blob([html], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = document.title + '.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function downloadMD() {
+      updateTitle();
+      const text = article.textContent;
+
+      if ('showSaveFilePicker' in window) {
+        try {
+          const handle = await showSaveFilePicker({
+            suggestedName: document.title + '.md',
+            types: [{
+              description: 'MD file',
+              accept: {'text/plain': ['.md']},
+            }],
+          });
+          const writable = await handle.createWritable();
+          await writable.write(text);
+          await writable.close();
+          return;
+        } catch (e) {
+          if (e.name === 'AbortError') return;
+        }
+      }
+
+      const blob = new Blob([text], {type: 'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = document.title + '.md';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ============================================================
+    // UTILITIES
+    // ============================================================
+
+    function debounce(ms, fn) {
+      let timer;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), ms);
+      };
+    }
+
+    // ============================================================
+    // MARKDOWN PARSER
+    // ============================================================
+
+    function parseMarkdown(element) {
+      const input = element.textContent;
+      const frag = document.createDocumentFragment();
+
+      // Single-line block patterns (checked per line)
+      const lineBlockMatchers = [
+        {name: 'md-h1', re: /^#[ \t]+.*/},
+        {name: 'md-h2', re: /^##[ \t]+.*/},
+        {name: 'md-h3', re: /^###[ \t]+.*/},
+        {name: 'md-h4', re: /^####[ \t]+.*/},
+        {name: 'md-h5', re: /^#####[ \t]+.*/},
+        {name: 'md-h6', re: /^######[ \t]+.*/},
+        {name: 'md-blockquote', re: /^>[ \t]?.*/},
+        {name: 'md-hr', re: /^---+$/},
+        {name: 'md-table-separator', re: /^\|[-:\s|]+\|$/},
+        {name: 'md-table-row', re: /^\|.+\|$/},
+      ];
+
+      // Inline patterns
+      const inlineMatchers = [
+        {name: 'md-codeblock', re: /```[^\n]*\n[\s\S]*?\n```/y},
+        {name: 'md-codeblock', re: /~~~[^\n]*\n[\s\S]*?\n~~~/y},
+        {name: 'md-code', re: /`[^`\n]*`/y},
+        {name: 'md-bold', re: /\*\*[^*\n]+?\*\*/y},
+        {name: 'md-bold', re: /__[^_\n]+?__/y},
+        {name: 'md-strike', re: /~~[^~\n]+?~~/y},
+        {name: 'md-italic', re: /\*[^*\n]+?\*/y},
+        {name: 'md-italic', re: /_[^_\n]+?_/y},
+        {name: 'md-url', re: /https?:\/\/[^\s<>()\[\]{}"'`]+/y},
+      ];
+
+      const specials = ['`', '~', '*', '_', 'h'];
+
+      // Process text with inline patterns only
+      function processInline(text, container) {
+        let i = 0;
+        while (i < text.length) {
+          let matched = false;
+          for (const m of inlineMatchers) {
+            m.re.lastIndex = i;
+            const res = m.re.exec(text);
+            if (res && res.index === i) {
+              const raw = res[0];
+              if (m.name === 'md-url') {
+                const a = document.createElement('a');
+                a.className = 'md-url';
+                a.href = raw;
+                a.textContent = raw;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                container.appendChild(a);
+              } else {
+                const span = document.createElement('span');
+                span.className = m.name;
+                span.textContent = raw;
+                container.appendChild(span);
+              }
+              i += raw.length;
+              matched = true;
+              break;
+            }
+          }
+
+          if (matched) continue;
+
+          // Find next special character or newline
+          let next = text.length;
+          for (const ch of specials) {
+            const idx = text.indexOf(ch, i);
+            if (idx !== -1 && idx < next) next = idx;
+          }
+          // Also check for newline to handle line-by-line
+          const nlIdx = text.indexOf('\n', i);
+          if (nlIdx !== -1 && nlIdx < next) next = nlIdx;
+
+          if (next === i) {
+            container.appendChild(document.createTextNode(text[i]));
+            i++;
+            continue;
+          }
+
+          container.appendChild(document.createTextNode(text.slice(i, next)));
+          i = next;
+        }
+      }
+
+      // First pass: handle code blocks which span multiple lines
+      const codeBlockRe = /```[^\n]*\n[\s\S]*?\n```|~~~[^\n]*\n[\s\S]*?\n~~~/g;
+      let lastEnd = 0;
+      let match;
+      const segments = [];
+
+      while ((match = codeBlockRe.exec(input)) !== null) {
+        if (match.index > lastEnd) {
+          segments.push({type: 'text', content: input.slice(lastEnd, match.index)});
+        }
+        segments.push({type: 'codeblock', content: match[0]});
+        lastEnd = match.index + match[0].length;
+      }
+      if (lastEnd < input.length) {
+        segments.push({type: 'text', content: input.slice(lastEnd)});
+      }
+
+      // If no code blocks, just process everything as text
+      if (segments.length === 0) {
+        segments.push({type: 'text', content: input});
+      }
+
+      // Process each segment
+      for (const seg of segments) {
+        if (seg.type === 'codeblock') {
+          const span = document.createElement('span');
+          span.className = 'md-codeblock';
+          span.textContent = seg.content;
+          frag.appendChild(span);
+        } else {
+          // Process text line by line for block patterns
+          const lines = seg.content.split('\n');
+
+          lines.forEach((line, lineIdx) => {
+            let blockMatch = null;
+
+            // Check for block-level patterns
+            for (const m of lineBlockMatchers) {
+              if (m.re.test(line)) {
+                blockMatch = m;
+                break;
+              }
+            }
+
+            if (blockMatch) {
+              const span = document.createElement('span');
+              span.className = blockMatch.name;
+              span.textContent = line;
+              frag.appendChild(span);
+            } else if (line.length > 0) {
+              // Process inline formatting for non-empty lines
+              processInline(line, frag);
+            }
+
+            // Add newline between lines (but not after the last line in this segment)
+            if (lineIdx < lines.length - 1) {
+              frag.appendChild(document.createTextNode('\n'));
+            }
+          });
+        }
+      }
+
+      article.textContent = '';
+      article.appendChild(frag);
+      article.normalize();
+    }
+
+    // ============================================================
+    // EDITOR CLASS
+    // ============================================================
+
+    function Editor(element, highlight) {
+      const listeners = [];
+      const history = [];
+      let at = -1, prev;
+
+      // Record initial state
+      setTimeout(() => {
+        recordHistory();
+      }, 0);
+
+      const debounceHighlight = debounce(30, () => {
+        const pos = save();
+        highlight(element);
+        restore(pos);
+      });
+
+      const shouldRecord = (event) => {
+        return !isUndo(event) && !isRedo(event)
+          && event.key !== 'Meta'
+          && event.key !== 'Control'
+          && event.key !== 'Alt'
+          && !event.key.startsWith('Arrow');
+      };
+
+      let recording = false;
+      const debounceRecordHistory = debounce(300, (event) => {
+        if (shouldRecord(event)) {
+          recordHistory();
+          recording = false;
+        }
+      });
+
+      const on = (type, fn) => {
+        listeners.push([type, fn]);
+        element.addEventListener(type, fn);
+      };
+
+      on('keydown', event => {
+        if (event.defaultPrevented) return;
+        prev = toString();
+        if (isUndo(event)) doUndo(event);
+        if (isRedo(event)) doRedo(event);
+        if (shouldRecord(event) && !recording) {
+          recordHistory();
+          recording = true;
+        }
+      });
+
+      on('keyup', event => {
+        if (event.defaultPrevented) return;
+        if (event.isComposing) return;
+        if (prev !== toString()) debounceHighlight();
+        debounceRecordHistory(event);
+      });
+
+      on('paste', () => setTimeout(recordHistory, 10));
+      on('cut', () => setTimeout(recordHistory, 10));
+      on('beforeinput', event => {
+        if (event.inputType === 'historyUndo') doUndo(event);
+        if (event.inputType === 'historyRedo') doRedo(event);
+      });
+
+      function save() {
+        const s = getSelection();
+        const pos = {start: 0, end: 0, dir: undefined};
+        let {anchorNode, anchorOffset, focusNode, focusOffset} = s;
+        if (!anchorNode || !focusNode) throw 'error1';
+        if (anchorNode === element && focusNode === element) {
+          pos.start = (anchorOffset > 0 && element.textContent) ? element.textContent.length : 0;
+          pos.end = (focusOffset > 0 && element.textContent) ? element.textContent.length : 0;
+          pos.dir = (focusOffset >= anchorOffset) ? '->' : '<-';
+          return pos;
+        }
+        if (anchorNode.nodeType === Node.ELEMENT_NODE) {
+          const node = document.createTextNode('');
+          anchorNode.insertBefore(node, anchorNode.childNodes[anchorOffset]);
+          anchorNode = node;
+          anchorOffset = 0;
+        }
+        if (focusNode.nodeType === Node.ELEMENT_NODE) {
+          const node = document.createTextNode('');
+          focusNode.insertBefore(node, focusNode.childNodes[focusOffset]);
+          focusNode = node;
+          focusOffset = 0;
+        }
+        visit(element, el => {
+          if (el === anchorNode && el === focusNode) {
+            pos.start += anchorOffset;
+            pos.end += focusOffset;
+            pos.dir = anchorOffset <= focusOffset ? '->' : '<-';
+            return 'stop';
+          }
+          if (el === anchorNode) {
+            pos.start += anchorOffset;
+            if (!pos.dir) {
+              pos.dir = '->';
+            } else {
+              return 'stop';
+            }
+          } else if (el === focusNode) {
+            pos.end += focusOffset;
+            if (!pos.dir) {
+              pos.dir = '<-';
+            } else {
+              return 'stop';
+            }
+          }
+          if (el.nodeType === Node.TEXT_NODE) {
+            if (pos.dir !== '->') pos.start += el.nodeValue.length;
+            if (pos.dir !== '<-') pos.end += el.nodeValue.length;
+          }
+        });
+
+        element.normalize();
+        return pos;
+      }
+
+      function restore(pos) {
+        const s = getSelection();
+        let startNode, startOffset = 0;
+        let endNode, endOffset = 0;
+
+        if (!pos.dir) pos.dir = '->';
+        if (pos.start < 0) pos.start = 0;
+        if (pos.end < 0) pos.end = 0;
+
+        if (pos.dir === '<-') {
+          const {start, end} = pos;
+          pos.start = end;
+          pos.end = start;
+        }
+
+        let current = 0;
+
+        visit(element, el => {
+          if (el.nodeType !== Node.TEXT_NODE) return;
+
+          const len = (el.nodeValue || '').length;
+          if (current + len > pos.start) {
+            if (!startNode) {
+              startNode = el;
+              startOffset = pos.start - current;
+            }
+            if (current + len > pos.end) {
+              endNode = el;
+              endOffset = pos.end - current;
+              return 'stop';
+            }
+          }
+          current += len;
+        });
+
+        if (!startNode) {
+          startNode = element;
+          startOffset = element.childNodes.length;
+        }
+        if (!endNode) {
+          endNode = element;
+          endOffset = element.childNodes.length;
+        }
+
+        if (pos.dir === '<-') {
+          [startNode, startOffset, endNode, endOffset] = [endNode, endOffset, startNode, startOffset];
+        }
+
+        {
+          const startEl = uneditable(startNode);
+          if (startEl) {
+            const node = document.createTextNode('');
+            startEl.parentNode?.insertBefore(node, startEl);
+            startNode = node;
+            startOffset = 0;
+          }
+          const endEl = uneditable(endNode);
+          if (endEl) {
+            const node = document.createTextNode('');
+            endEl.parentNode?.insertBefore(node, endEl);
+            endNode = node;
+            endOffset = 0;
+          }
+        }
+
+        s.setBaseAndExtent(startNode, startOffset, endNode, endOffset);
+        element.normalize();
+      }
+
+      function uneditable(node) {
+        while (node && node !== element) {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node.getAttribute('contenteditable') === 'false') {
+              return node;
+            }
+          }
+          node = node.parentNode;
+        }
+      }
+
+      function doUndo(event) {
+        preventDefault(event);
+        if (at <= 0) return; // Nothing to undo
+        at--;
+        const record = history[at];
+        if (record) {
+          element.innerHTML = record.html;
+          restore(record.pos);
+        }
+      }
+
+      function doRedo(event) {
+        preventDefault(event);
+        if (at >= history.length - 1) return; // Nothing to redo
+        at++;
+        const record = history[at];
+        if (record) {
+          element.innerHTML = record.html;
+          restore(record.pos);
+        }
+      }
+
+      function recordHistory() {
+        const html = element.innerHTML;
+        const pos = save();
+        const lastRecord = history[at];
+        if (
+          lastRecord
+          && lastRecord.html === html
+          && lastRecord.pos.start === pos.start
+          && lastRecord.pos.end === pos.end
+        ) return;
+        at++;
+        history[at] = {html, pos};
+        history.splice(at + 1);
+        const maxHistory = 10_000;
+        if (at > maxHistory) {
+          at = maxHistory;
+          history.splice(0, 1);
+        }
+      }
+
+      function visit(editor, visitor) {
+        const queue = [];
+        if (editor.firstChild) queue.push(editor.firstChild);
+        let el = queue.pop();
+        while (el) {
+          if (visitor(el) === 'stop') break;
+          if (el.nextSibling) queue.push(el.nextSibling);
+          if (el.firstChild) queue.push(el.firstChild);
+          el = queue.pop();
+        }
+      }
+
+      function isCtrl(event) {
+        return event.metaKey || event.ctrlKey;
+      }
+
+      function isUndo(event) {
+        return isCtrl(event) && !event.shiftKey && event.code === 'KeyZ';
+      }
+
+      function isRedo(event) {
+        return isCtrl(event) && event.shiftKey && event.code === 'KeyZ';
+      }
+
+      function toString() {
+        return element.textContent || '';
+      }
+
+      function preventDefault(event) {
+        event.preventDefault();
+      }
+
+      function getSelection() {
+        return element.getRootNode().getSelection();
+      }
+
+      return {
+        set(content) {
+          element.textContent = content;
+          highlight(element);
+        },
+        destroy() {
+          for (const [type, fn] of listeners) element.removeEventListener(type, fn);
+        },
+      };
+    }
+  </script>
+
+  <!-- SVG Icons -->
+  <svg style="display: none" aria-hidden="true" focusable="false">
+    <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M12 5l0 14"/>
+      <path d="M5 12l14 0"/>
+    </symbol>
+    <symbol id="icon-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25"
+            stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M8 9h-1a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-8a2 2 0 0 0 -2 -2h-1"/>
+      <path d="M12 14v-11"/>
+      <path d="M9 6l3 -3l3 3"/>
+    </symbol>
+    <symbol id="icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <rect x="5" y="11" width="14" height="10" rx="2"/>
+      <circle cx="12" cy="16" r="1"/>
+      <path d="M8 11v-4a4 4 0 0 1 8 0v4"/>
+    </symbol>
+    <symbol id="icon-qrcode" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -4"/>
+      <path d="M7 17l0 .01"/>
+      <path d="M14 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -4"/>
+      <path d="M7 7l0 .01"/>
+      <path d="M4 15a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -4"/>
+      <path d="M17 7l0 .01"/>
+      <path d="M14 14l3 0"/>
+      <path d="M20 14l0 .01"/>
+      <path d="M14 14l0 3"/>
+      <path d="M14 20l3 0"/>
+      <path d="M17 17l3 0"/>
+      <path d="M20 17l0 3"/>
+    </symbol>
+    <symbol id="icon-empty" viewBox="0 0 24 24"></symbol>
+  </svg>
+</body>
+</html>

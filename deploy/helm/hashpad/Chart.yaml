@@ -1,0 +1,27 @@
+apiVersion: v2
+name: hashpad
+description: A minimal, serverless text editor that stores content entirely in the URL hash. No backend, no database - just share the URL.
+type: application
+version: "0.1.0"
+appVersion: "latest"
+keywords:
+  - text-editor
+  - markdown
+  - serverless
+  - pwa
+  - url-storage
+  - encrypted
+  - qr-code
+  - privacy
+  - no-backend
+  - shareable
+maintainers:
+  - name: André Nogueira
+    url: https://github.com/aanogueira
+sources:
+  - https://github.com/aanogueira/hashpad
+home: https://github.com/aanogueira/hashpad
+icon: https://raw.githubusercontent.com/aanogueira/hashpad/refs/heads/main/icon.svg
+annotations:
+  artifacthub.io/license: MIT
+  artifacthub.io/category: productivity

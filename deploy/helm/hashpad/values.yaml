@@ -1,13 +1,11 @@
 # Default values for hashpad website
 
-imageRegistry: ghcr.io/aanogueira
-
 imagePullSecrets: []
 
 replicaCount: 1
 
 image:
-  repository: hashpad
+  repository: ghcr.io/techquestsdev/hashpad
   tag: ""
   pullPolicy: Always
 

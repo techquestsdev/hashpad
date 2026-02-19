@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="favicon.png" type="image/png">
-  <title>Textarea</title>
+  <title>Hashpad</title>
   <style>
     /* ============================================================
        DEPLOYMENT CONFIGURATION
@@ -15,7 +15,7 @@
        ============================================================ */
     :root {
       /* Brand & Identity */
-      --brand-name: "Textarea";
+      --brand-name: "Hashpad";
       --brand-color: #0569fa;
 
       /* Typography */
@@ -772,7 +772,7 @@
 
     function updateTitle() {
       const match = article.textContent.match(/^\n*#(.+)\n/);
-      document.title = match?.[1]?.trim() || 'Textarea';
+      document.title = match?.[1]?.trim() || 'Hashpad';
     }
 
     function updateLockIndicator() {

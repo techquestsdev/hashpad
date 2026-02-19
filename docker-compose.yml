@@ -1,7 +1,7 @@
 services:
-  textarea:
+  hashpad:
     build: .
-    container_name: textarea
+    container_name: hashpad
     restart: unless-stopped
     ports:
       - "8080:8080"

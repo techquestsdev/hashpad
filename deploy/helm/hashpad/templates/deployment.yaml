@@ -22,7 +22,7 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: website
+        - name: hashpad
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ include "hashpad.image" (dict "image" .Values.image "appVersion" .Chart.AppVersion) }}

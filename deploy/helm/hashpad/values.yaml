@@ -1,4 +1,4 @@
-# Default values for hashpad website
+# Default values for Hashpad
 
 imagePullSecrets: []
 

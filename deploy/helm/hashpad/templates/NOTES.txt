@@ -1,4 +1,4 @@
-🎉 Code Search Website has been deployed!
+🎉 Hashpad has been deployed!
 
 {{- if .Values.ingress.enabled }}
 Access the application at:
@@ -20,4 +20,4 @@ To check the status of the deployment:
 
   kubectl get pods -l app.kubernetes.io/instance={{ .Release.Name }}
 
-For more information, see: https://github.com/aanogueira/code-search
+For more information, see: https://github.com/techquestsdev/hashpad

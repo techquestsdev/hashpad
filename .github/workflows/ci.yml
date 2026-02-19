@@ -114,7 +114,11 @@ jobs:
 
           # Get commit message for changelog
           COMMIT_MSG=$(git log -1 --pretty=%B)
-          echo "changelog=$COMMIT_MSG" >> $GITHUB_OUTPUT
+          {
+            echo "changelog<<CHANGELOG_EOF"
+            echo "$COMMIT_MSG"
+            echo "CHANGELOG_EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Create and push tag
         if: steps.tag.outputs.new_tag != ''

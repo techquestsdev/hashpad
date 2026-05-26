@@ -1,0 +1,8 @@
+# Transitive dependency of caddy:2-alpine (the runtime image we use).
+# Upstream Caddy has migrated its direct dependency to go-jose v4, but
+# something still pulls v3.0.4 into the final binary. Tracking until
+# Caddy releases an image with go-jose/v3 >= v3.0.5.
+#
+# Not exploitable in our deployment: hashpad serves static files only;
+# the JOSE code path is not reached at runtime.
+CVE-2026-34986

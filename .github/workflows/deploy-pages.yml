@@ -25,7 +25,7 @@ jobs:
           cp index.html 404.html qr.html manifest.json CNAME _site/
           cp favicon.ico favicon.png icon.png icon-512.png icon.svg _site/
       - uses: actions/configure-pages@v6
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
 
@@ -37,4 +37,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

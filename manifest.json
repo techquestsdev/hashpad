@@ -1,7 +1,6 @@
 {
-  "name": "Hashpad"
+  "name": "Hashpad",
   "short_name": "Hashpad",
-  "description": "Minimal text editor with URL-based storage",
   "description": "A minimal, serverless text editor that stores content in the URL",
   "start_url": "/",
   "display": "standalone",

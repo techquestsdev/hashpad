@@ -23,8 +23,26 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser tests
+        run: npm test
+        env:
+          CI: "true"
+
   semantic-version:
     runs-on: ubuntu-latest
+    needs: [test]
     if: github.event_name == 'push'
     outputs:
       new_tag: ${{ steps.tag.outputs.new_tag }}
@@ -204,6 +222,7 @@ jobs:
 
   validate-docker:
     runs-on: ubuntu-latest
+    needs: [test]
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout code

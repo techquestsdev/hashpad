@@ -10,6 +10,7 @@ COPY index.html .
 COPY qr.html .
 COPY 404.html .
 COPY manifest.json .
+COPY sw.js .
 COPY favicon.ico .
 COPY favicon.png .
 COPY icon.png .

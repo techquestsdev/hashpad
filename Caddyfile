@@ -69,6 +69,12 @@
 	}
 	header @html Cache-Control "public, max-age=3600, must-revalidate"
 
+	# Service worker must always revalidate
+	@sw {
+		path /sw.js
+	}
+	header @sw Cache-Control "no-cache"
+
 	# On-the-fly compression (zstd preferred, gzip fallback)
 	encode zstd gzip
 

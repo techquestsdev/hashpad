@@ -27,6 +27,10 @@
       /* Layout */
       --max-width: 800px;
       --padding: 18px;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --edge: 16px;
 
       /* Light theme colors */
       --bg-color: #ffffff;
@@ -137,7 +141,7 @@
       background: var(--code-bg);
       color: var(--code-color);
       padding: 0.1em 0.3em;
-      border-radius: 3px;
+      border-radius: var(--radius-sm);
     }
 
     .md-codeblock {
@@ -145,7 +149,7 @@
       background: var(--code-bg);
       display: block;
       padding: 0.5em;
-      border-radius: 4px;
+      border-radius: var(--radius-md);
     }
 
     .md-bold {
@@ -160,17 +164,45 @@
       font-style: italic;
     }
 
-    .md-url {
+    .md-url, .md-link {
       cursor: pointer;
+    }
+
+    span.md-link {
+      color: var(--brand-color);
+      text-decoration: underline;
+    }
+
+    .md-image {
+      color: var(--brand-color);
+      font-style: italic;
+    }
+
+    .md-footnote {
+      color: var(--brand-color);
+      font-size: 0.85em;
+      vertical-align: super;
+    }
+
+    .md-escape {
+      opacity: 0.5;
+    }
+
+    .md-mark {
+      background: rgba(255, 221, 0, 0.4);
+      border-radius: var(--radius-sm);
     }
 
     /* Blockquote */
     .md-blockquote {
-      display: block;
       border-left: 3px solid var(--brand-color);
-      padding-left: 1em;
-      margin-left: 0;
+      padding-left: calc(0.5em + var(--depth, 1) * 0.6em);
       opacity: 0.85;
+      box-decoration-break: clone;
+    }
+
+    .md-bq-marker {
+      opacity: 0.4;
     }
 
     /* Table rows */
@@ -188,10 +220,25 @@
     /* Horizontal rule */
     .md-hr {
       display: block;
-      color: transparent;
+      color: rgba(128, 128, 128, 0.5);
       border-bottom: 2px solid rgba(128, 128, 128, 0.3);
-      margin: 0.25em 0;
-      line-height: 0.5;
+    }
+
+    .md-link-def {
+      opacity: 0.6;
+    }
+
+    .md-list-marker {
+      color: var(--brand-color);
+      font-weight: bold;
+    }
+
+    .md-task {
+      font-family: var(--font-family-mono);
+    }
+
+    .md-task-done {
+      opacity: 0.5;
     }
 
     /* FAB Button */
@@ -200,7 +247,7 @@
       background-color: var(--button-bg);
       border-radius: 50%;
       border: none;
-      bottom: 15px;
+      bottom: var(--edge);
       box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, .12);
       color: #fff;
       cursor: pointer;
@@ -213,7 +260,7 @@
       padding: 0;
       place-items: center;
       position: fixed;
-      right: 15px;
+      right: var(--edge);
       text-decoration: none;
       touch-action: manipulation;
       transition: background-color .3s ease-out;
@@ -259,12 +306,12 @@
       flex-direction: column;
       width: 220px;
       position: fixed;
-      right: 16px;
-      bottom: 77px;
+      right: var(--edge);
+      bottom: calc(var(--edge) + 46px + 16px);
       box-shadow: 0 19px 38px rgba(0, 0, 0, 0.10), 0 15px 12px rgba(0, 0, 0, 0.05);
       background: var(--elevated-bg);
       backdrop-filter: blur(10px);
-      border-radius: 10px;
+      border-radius: var(--radius-lg);
       z-index: 2;
     }
 
@@ -309,13 +356,13 @@
     }
 
     #menu .item:first-child {
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
+      border-top-left-radius: var(--radius-lg);
+      border-top-right-radius: var(--radius-lg);
     }
 
     #menu .item:last-child {
-      border-bottom-left-radius: 10px;
-      border-bottom-right-radius: 10px;
+      border-bottom-left-radius: var(--radius-lg);
+      border-bottom-right-radius: var(--radius-lg);
     }
 
     /* Notification */
@@ -327,11 +374,11 @@
       display: flex;
       flex-direction: column;
       position: fixed;
-      right: 17px;
-      top: 17px;
+      right: var(--edge);
+      top: var(--edge);
       background: var(--notification-bg);
       color: #fff;
-      border-radius: 30px;
+      border-radius: 999px;
       font: 18px / 1 var(--font-family);
       font-weight: 600;
       z-index: 2;
@@ -361,7 +408,7 @@
 
     #password-modal .modal-content {
       background: var(--elevated-bg);
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       padding: 24px;
       width: 90%;
       max-width: 360px;
@@ -379,7 +426,7 @@
       padding: 12px 16px;
       font-size: 16px;
       border: 2px solid rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       margin-bottom: 16px;
       font-family: var(--font-family);
       background: var(--bg-color);
@@ -405,7 +452,7 @@
 
     #password-modal button {
       padding: 10px 20px;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -437,14 +484,14 @@
     /* Lock indicator */
     #lock-indicator {
       position: fixed;
-      top: 17px;
-      left: 17px;
+      top: var(--edge);
+      left: var(--edge);
       display: none;
       align-items: center;
       gap: 8px;
       padding: 8px 14px;
       background: var(--elevated-bg);
-      border-radius: 20px;
+      border-radius: 999px;
       font-size: 14px;
       color: var(--text-color);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -507,13 +554,13 @@
     </a>
     <a class="item" id="save-as-html" href="" role="menuitem">
       <svg aria-hidden="true" focusable="false" width="22" height="22">
-        <use xlink:href="#icon-empty"></use>
+        <use xlink:href="#icon-download"></use>
       </svg>
       Save as HTML
     </a>
     <a class="item" id="save-as-text" href="" role="menuitem">
       <svg aria-hidden="true" focusable="false" width="22" height="22">
-        <use xlink:href="#icon-empty"></use>
+        <use xlink:href="#icon-download"></use>
       </svg>
       Save as MD
     </a>
@@ -706,6 +753,9 @@
 
     addEventListener('DOMContentLoaded', load);
     addEventListener('hashchange', load);
+    if ('serviceWorker' in navigator) {
+      addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    }
     addEventListener('keydown', e => {
       if ((e.metaKey || e.ctrlKey) && e.code === 'KeyS') {
         e.preventDefault();
@@ -1048,26 +1098,39 @@
         {name: 'md-h4', re: /^####[ \t]+.*/},
         {name: 'md-h5', re: /^#####[ \t]+.*/},
         {name: 'md-h6', re: /^######[ \t]+.*/},
-        {name: 'md-blockquote', re: /^>[ \t]?.*/},
-        {name: 'md-hr', re: /^---+$/},
+        {name: 'md-hr', re: /^[ \t]*([-*_])([ \t]*\1){2,}[ \t]*$/},
         {name: 'md-table-separator', re: /^\|[-:\s|]+\|$/},
         {name: 'md-table-row', re: /^\|.+\|$/},
+        {name: 'md-link-def', re: /^[ \t]{0,3}\[[^\]\n]+\]:[ \t]+\S+.*/},
       ];
 
-      // Inline patterns
+      // Markdown link target; only http(s) and mailto become anchors, so no javascript: URLs
+      function markdownLinkHref(raw) {
+        const url = /\]\(([^)\s]+)/.exec(raw)[1];
+        return /^(https?:\/\/|mailto:)/i.test(url) ? url : null;
+      }
+
+      // Inline patterns; href maps a match to its link target (null renders a plain span)
       const inlineMatchers = [
+        {name: 'md-escape', re: /\\[\\`*_{}\[\]()#+\-.!~<>|=]/y},
         {name: 'md-codeblock', re: /```[^\n]*\n[\s\S]*?\n```/y},
         {name: 'md-codeblock', re: /~~~[^\n]*\n[\s\S]*?\n~~~/y},
         {name: 'md-code', re: /`[^`\n]*`/y},
-        {name: 'md-bold', re: /\*\*[^*\n]+?\*\*/y},
-        {name: 'md-bold', re: /__[^_\n]+?__/y},
-        {name: 'md-strike', re: /~~[^~\n]+?~~/y},
-        {name: 'md-italic', re: /\*[^*\n]+?\*/y},
-        {name: 'md-italic', re: /_[^_\n]+?_/y},
-        {name: 'md-url', re: /https?:\/\/[^\s<>()\[\]{}"'`]+/y},
+        {name: 'md-image', re: /!\[[^\]\n]*\]\([^)\s\n]+(?:[ \t]+"[^"\n]*")?\)/y},
+        {name: 'md-footnote', re: /\[\^[^\]\s]+\]/y},
+        {name: 'md-link', re: /\[[^\]\n]+\]\[[^\]\n]*\]/y},
+        {name: 'md-link', re: /\[[^\]\n]*\]\([^)\s\n]+(?:[ \t]+"[^"\n]*")?\)/y, href: markdownLinkHref},
+        {name: 'md-bold', re: /\*\*(?:[^*\n]|\*(?!\*))+?\*\*/y, nest: true, delim: 2},
+        {name: 'md-bold', re: /__(?:[^_\n]|_(?!_))+?__/y, nest: true, delim: 2},
+        {name: 'md-strike', re: /~~[^~\n]+?~~/y, nest: true, delim: 2},
+        {name: 'md-italic', re: /\*(?:[^*\n]|\*\*[^*\n]+?\*\*)+?\*/y, nest: true, delim: 1},
+        {name: 'md-italic', re: /_(?:[^_\n]|__[^_\n]+?__)+?_/y, nest: true, delim: 1},
+        {name: 'md-mark', re: /==[^=\n]+?==/y, nest: true, delim: 2},
+        {name: 'md-url', re: /<https?:\/\/[^>\s]+>/y, href: raw => raw.slice(1, -1)},
+        {name: 'md-url', re: /https?:\/\/[^\s<>()\[\]{}"'`]+/y, href: raw => raw},
       ];
 
-      const specials = ['`', '~', '*', '_', 'h'];
+      const specials = ['`', '~', '*', '_', 'h', '[', '!', '<', '\\', '='];
 
       // Process text with inline patterns only
       function processInline(text, container) {
@@ -1079,20 +1142,22 @@
             const res = m.re.exec(text);
             if (res && res.index === i) {
               const raw = res[0];
-              if (m.name === 'md-url') {
-                const a = document.createElement('a');
-                a.className = 'md-url';
-                a.href = raw;
-                a.textContent = raw;
-                a.target = '_blank';
-                a.rel = 'noopener noreferrer';
-                container.appendChild(a);
+              const href = m.href?.(raw);
+              const node = document.createElement(href ? 'a' : 'span');
+              node.className = m.name;
+              if (m.nest && !href) {
+                node.appendChild(document.createTextNode(raw.slice(0, m.delim)));
+                processInline(raw.slice(m.delim, -m.delim), node);
+                node.appendChild(document.createTextNode(raw.slice(-m.delim)));
               } else {
-                const span = document.createElement('span');
-                span.className = m.name;
-                span.textContent = raw;
-                container.appendChild(span);
+                node.textContent = raw;
               }
+              if (href) {
+                node.href = href;
+                node.target = '_blank';
+                node.rel = 'noopener noreferrer';
+              }
+              container.appendChild(node);
               i += raw.length;
               matched = true;
               break;
@@ -1166,11 +1231,41 @@
               }
             }
 
-            if (blockMatch) {
+            const quoteMatch = /^((?:>[ \t]?)+)/.exec(line);
+            const listMatch = /^([ \t]*)([-*+]|\d{1,9}[.)])([ \t]+)(\[[ xX]\][ \t]+)?/.exec(line);
+
+            if (quoteMatch) {
+              const prefix = quoteMatch[1];
+              const depth = prefix.match(/>/g).length;
+              const span = document.createElement('span');
+              span.className = 'md-blockquote';
+              span.style.setProperty('--depth', depth);
+              const markerSpan = document.createElement('span');
+              markerSpan.className = 'md-bq-marker';
+              markerSpan.textContent = prefix;
+              span.appendChild(markerSpan);
+              processInline(line.slice(prefix.length), span);
+              frag.appendChild(span);
+            } else if (blockMatch) {
               const span = document.createElement('span');
               span.className = blockMatch.name;
               span.textContent = line;
               frag.appendChild(span);
+            } else if (listMatch) {
+              // Style only the marker and task box; the rest of the item is inline-formatted
+              const [whole, indent, marker, spacing, task] = listMatch;
+              if (indent) frag.appendChild(document.createTextNode(indent));
+              const markerSpan = document.createElement('span');
+              markerSpan.className = 'md-list-marker';
+              markerSpan.textContent = marker + spacing;
+              frag.appendChild(markerSpan);
+              if (task) {
+                const taskSpan = document.createElement('span');
+                taskSpan.className = /\[[xX]\]/.test(task) ? 'md-task md-task-done' : 'md-task';
+                taskSpan.textContent = task;
+                frag.appendChild(taskSpan);
+              }
+              processInline(line.slice(whole.length), frag);
             } else if (line.length > 0) {
               // Process inline formatting for non-empty lines
               processInline(line, frag);
@@ -1259,7 +1354,7 @@
         const s = getSelection();
         const pos = {start: 0, end: 0, dir: undefined};
         let {anchorNode, anchorOffset, focusNode, focusOffset} = s;
-        if (!anchorNode || !focusNode) throw 'error1';
+        if (!anchorNode || !focusNode) return pos;
         if (anchorNode === element && focusNode === element) {
           pos.start = (anchorOffset > 0 && element.textContent) ? element.textContent.length : 0;
           pos.end = (focusOffset > 0 && element.textContent) ? element.textContent.length : 0;
@@ -1518,7 +1613,13 @@
       <path d="M17 17l3 0"/>
       <path d="M20 17l0 3"/>
     </symbol>
-    <symbol id="icon-empty" viewBox="0 0 24 24"></symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/>
+      <path d="M7 11l5 5l5 -5"/>
+      <path d="M12 4l0 12"/>
+    </symbol>
   </svg>
 </body>
 </html>

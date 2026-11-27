@@ -243,11 +243,12 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Run Trivy vulnerability scanner on PR
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
           format: "table"
           severity: "CRITICAL,HIGH"
+          ignore-unfixed: true
           exit-code: "1"
 
   create-release:

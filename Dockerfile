@@ -1,5 +1,9 @@
+FROM caddy:2-builder-alpine AS builder
+RUN xcaddy build --output /usr/bin/caddy --replace golang.org/x/net=golang.org/x/net@v0.63.0
+
 # Runtime stage - serve static files with Caddy
 FROM caddy:2-alpine
+COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 
 WORKDIR /app
 
@@ -23,8 +27,8 @@ COPY Caddyfile /etc/caddy/Caddyfile
 # allowPrivilegeEscalation=false (we bind to high port 8080).
 # Also create directories with proper permissions for non-root runtime.
 RUN apk add --no-cache libcap attr \
-  && setcap -r /usr/bin/caddy \
-  && setfattr -x security.capability /usr/bin/caddy || true \
+  && (setcap -r /usr/bin/caddy || true) \
+  && (setfattr -x security.capability /usr/bin/caddy || true) \
   && apk del libcap attr \
   && mkdir -p /config/caddy /data/caddy \
   && chown -R 1000:1000 /config /data

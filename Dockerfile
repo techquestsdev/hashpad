@@ -1,5 +1,5 @@
 FROM caddy:2-builder-alpine AS builder
-RUN xcaddy build --output /usr/bin/caddy --with golang.org/x/net@v0.63.0
+RUN xcaddy build --output /usr/bin/caddy --replace golang.org/x/net=golang.org/x/net@v0.63.0
 
 # Runtime stage - serve static files with Caddy
 FROM caddy:2-alpine
